@@ -14,6 +14,7 @@ public class Main {
         while(true){
             System.out.println("\n1. Add task");
             System.out.println("2. View tasks");
+            System.out.println("3. Remove a task");
             System.out.print("Enter your choice: ");
 
             try{
@@ -26,6 +27,9 @@ public class Main {
                         break;
                     case 2:
                         listTasks(manager);
+                        break;
+                    case 3:
+                        removeTask(sc, manager);
                         break;
                     default:
                         break;
@@ -64,5 +68,29 @@ public class Main {
         for(int i=0; i<tasks.size(); i++){
             System.out.println((i + 1) + ". " + tasks.get(i));
         }
+    }
+
+    public static void removeTask(Scanner sc, ScheduleManagerInstance manager){
+        List<Task> tasks = manager.getTasks();
+
+        if(tasks.isEmpty()){
+            System.out.println("No tasks found...");
+            return;
+        }
+
+        
+        for(int i=0; i<tasks.size(); i++){
+            System.out.println((i + 1) + ". " + tasks.get(i));
+        }
+        
+        System.out.print("\nEnter the task to be deleted: ");
+        
+        int idx = Integer.parseInt(sc.nextLine()) - 1;
+        if (idx >= 0 && idx < tasks.size()) {
+            manager.deleteTask(tasks.get(idx));
+        } else {
+            System.out.println("Invalid task number.");
+        }
+
     }
 }
