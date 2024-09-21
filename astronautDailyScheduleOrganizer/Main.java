@@ -1,6 +1,10 @@
+package astronautDailyScheduleOrganizer;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Scanner;
+
+import astronautDailyScheduleOrganizer.tasks.Task;
+import astronautDailyScheduleOrganizer.tasks.TaskFactory;
 
 public class Main {
     public static void main(String[] args) {

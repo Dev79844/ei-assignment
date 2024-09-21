@@ -1,5 +1,8 @@
+package astronautDailyScheduleOrganizer.tasks;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+
+import astronautDailyScheduleOrganizer.Priority;
 
 public class Task {
     private String description;

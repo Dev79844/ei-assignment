@@ -1,7 +1,10 @@
+package astronautDailyScheduleOrganizer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import astronautDailyScheduleOrganizer.tasks.Task;
 
 public class ScheduleManagerInstance {
     private static ScheduleManagerInstance instance;
