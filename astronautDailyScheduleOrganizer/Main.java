@@ -2,11 +2,14 @@ package astronautDailyScheduleOrganizer;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 import astronautDailyScheduleOrganizer.tasks.Task;
 import astronautDailyScheduleOrganizer.tasks.TaskFactory;
 
 public class Main {
+
+    private static final Logger logger = Logger.getLogger(Main.class.getName());
     public static void main(String[] args) {
         ScheduleManagerInstance manager = ScheduleManagerInstance.getInstance();
         Scanner sc = new Scanner(System.in);
@@ -36,6 +39,7 @@ public class Main {
                 }
             }catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a number.");
+                logger.warning(e.toString());
             }
         }
     }
