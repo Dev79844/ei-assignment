@@ -5,16 +5,19 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
 
+import astronautDailyScheduleOrganizer.scheduleObserver.ScheduleObserver;
 import astronautDailyScheduleOrganizer.tasks.Task;
 
 public class ScheduleManagerInstance {
     private static ScheduleManagerInstance instance;
     private List<Task> tasks;
+    private List<ScheduleObserver> observers;
 
     public static final Logger logger = Logger.getLogger(ScheduleManagerInstance.class.getName());
 
     private ScheduleManagerInstance(){
         tasks = new ArrayList<>();
+        observers = new ArrayList<>();
     }
 
     public static ScheduleManagerInstance getInstance(){
@@ -25,8 +28,16 @@ public class ScheduleManagerInstance {
         return instance;
     }
 
-    public void addTask(Task task){
-        tasks.add(task);
+    public void addTask(Task newTask){
+        for(int i=0; i<tasks.size(); i++){
+            if(isConflict(tasks.get(i), newTask)){
+                notifyObservers(tasks.get(i));
+                logger.warning("Error: Task conflicts with existing task. " + tasks.get(i).getDescription());
+                return;
+            }
+        }
+        tasks.add(newTask);
+        System.out.println("Task added successfully. No conflicts.");
         logger.info("Task added successfully. No conflicts.");
     }
 
@@ -50,5 +61,19 @@ public class ScheduleManagerInstance {
         });
 
         return tasks;
+    }
+
+    private boolean isConflict(Task task1, Task task2){
+        return !(task1.getEndTime().isBefore(task2.getStartTime()) || task1.getStartTime().isAfter(task2.getEndTime()));
+    }
+
+    public void addObserver(ScheduleObserver observer){
+        observers.add(observer);
+    }
+
+    public void notifyObservers(Task existingTask){
+        for(ScheduleObserver observer : observers){
+            observer.onConflict(existingTask);
+        }
     }
 }

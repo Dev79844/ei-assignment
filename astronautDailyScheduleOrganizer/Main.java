@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
+import astronautDailyScheduleOrganizer.scheduleObserver.ConsoleObserver;
 import astronautDailyScheduleOrganizer.tasks.Task;
 import astronautDailyScheduleOrganizer.tasks.TaskFactory;
 
@@ -12,6 +13,7 @@ public class Main {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
     public static void main(String[] args) {
         ScheduleManagerInstance manager = ScheduleManagerInstance.getInstance();
+        manager.addObserver(new ConsoleObserver());
         Scanner sc = new Scanner(System.in);
 
         while(true){
@@ -34,6 +36,9 @@ public class Main {
                     case 3:
                         removeTask(sc, manager);
                         break;
+                    case 4:
+                        System.out.println("Exit...");
+                        return;
                     default:
                         break;
                 }
