@@ -1,5 +1,6 @@
 package astronautDailyScheduleOrganizer;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
@@ -50,27 +51,34 @@ public class Main {
     }
 
     public static void addTask(Scanner sc, ScheduleManagerInstance manager){
-        System.out.print("Enter Task description: ");
-        String description = sc.nextLine();
+        try{
 
-        System.out.print("Enter start time (hh:mm): ");
-        LocalTime startTime = LocalTime.parse(sc.nextLine());
+            System.out.print("Enter Task description: ");
+            String description = sc.nextLine();
+    
+            System.out.print("Enter start time (hh:mm): ");
+            LocalTime startTime = LocalTime.parse(sc.nextLine());
+    
+            System.out.print("Enter end time (hh:mm): ");
+            LocalTime endTime = LocalTime.parse(sc.nextLine());
+    
+            System.out.print("Enter priority level (LOW/MEDIUM/HIGH): ");
+            Priority priority = Priority.valueOf(sc.nextLine().toUpperCase());
 
-        System.out.print("Enter end time (hh:mm): ");
-        LocalTime endTime = LocalTime.parse(sc.nextLine());
-
-        System.out.print("Enter priority level (LOW/MEDIUM/HIGH): ");
-        Priority priority = Priority.valueOf(sc.nextLine().toUpperCase());
-
-        Task task = TaskFactory.createTask(description, startTime, endTime, priority);
-        manager.addTask(task);
+            Task task = TaskFactory.createTask(description, startTime, endTime, priority);
+            manager.addTask(task);
+        }catch(DateTimeParseException e){
+            System.out.println("Error: Invalid time format.");
+        }catch(IllegalArgumentException e){
+            System.out.println("Error: Invalid priority type");
+        }
     }
 
     public static void listTasks(ScheduleManagerInstance manager){
         List<Task> tasks = manager.getTasks();
 
         if(tasks.isEmpty()){
-            System.out.println("No tasks found...");
+            System.out.println("No tasks scheduled for the day.");
             return;
         }
 
@@ -80,26 +88,30 @@ public class Main {
     }
 
     public static void removeTask(Scanner sc, ScheduleManagerInstance manager){
-        List<Task> tasks = manager.getTasks();
+        try{
+            System.out.print("Enter task name: ");
+            String taskName = sc.nextLine();
 
-        if(tasks.isEmpty()){
-            System.out.println("No tasks found...");
-            return;
-        }
+            List<Task> tasks= manager.getTasks();
+            Task taskToRemove = null;
 
-        
-        for(int i=0; i<tasks.size(); i++){
-            System.out.println((i + 1) + ". " + tasks.get(i));
-        }
-        
-        System.out.print("\nEnter the task to be deleted: ");
-        
-        int idx = Integer.parseInt(sc.nextLine()) - 1;
-        if (idx >= 0 && idx < tasks.size()) {
-            manager.deleteTask(tasks.get(idx));
-        } else {
-            System.out.println("Invalid task number.");
-        }
+            for(int i=0; i<tasks.size(); i++){
+                if(tasks.get(i).getDescription().equalsIgnoreCase(taskName)){
+                    taskToRemove = tasks.get(i);
+                }
+            }
 
+            if(taskToRemove != null){
+                manager.deleteTask(taskToRemove);
+                System.out.println("Task removed successfully");
+                logger.info("Task removed successfully");
+            }else{
+                System.out.println("Error: Task not found.");
+                logger.warning("Error: Task not found.");
+            }
+
+        }catch(Exception e){
+            System.out.println(e.toString());
+        }
     }
 }
