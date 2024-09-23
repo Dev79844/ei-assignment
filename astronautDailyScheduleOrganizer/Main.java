@@ -2,7 +2,6 @@ package astronautDailyScheduleOrganizer;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.Scanner;
 import java.util.logging.Logger;
 
 import astronautDailyScheduleOrganizer.scheduleObserver.ConsoleObserver;
@@ -12,59 +11,34 @@ import astronautDailyScheduleOrganizer.tasks.TaskFactory;
 public class Main {
 
     private static final Logger logger = Logger.getLogger(Main.class.getName());
+    public static ScheduleManagerInstance manager = ScheduleManagerInstance.getInstance();
     public static void main(String[] args) {
-        ScheduleManagerInstance manager = ScheduleManagerInstance.getInstance();
+        // add console as observer
         manager.addObserver(new ConsoleObserver());
-        Scanner sc = new Scanner(System.in);
 
-        while(true){
-            System.out.println("\n1. Add task");
-            System.out.println("2. View tasks");
-            System.out.println("3. Remove a task");
-            System.out.println("4. Exit");
-            System.out.print("Enter your choice: ");
+        // add a task
+        addTask("Morning excercise", LocalTime.parse("07:00"), LocalTime.parse("08:00"), Priority.HIGH);
 
-            try{
+        addTask("Team Meeting", LocalTime.parse("09:00"), LocalTime.parse("10:00"), Priority.MEDIUM);
 
-                int choice = Integer.parseInt(sc.nextLine());
-    
-                switch (choice) {
-                    case 1:
-                        addTask(sc, manager);
-                        break;
-                    case 2:
-                        listTasks(manager);
-                        break;
-                    case 3:
-                        removeTask(sc, manager);
-                        break;
-                    case 4:
-                        System.out.println("Exit...");
-                        return;
-                    default:
-                        break;
-                }
-            }catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number.");
-                logger.warning(e.toString());
-            }
-        }
+        // view tasks
+        viewTasks();
+
+        // remove a task
+        removeTask("Morning excercise");
+
+        // add a task
+        addTask("Lunch Break", LocalTime.parse("12:00"), LocalTime.parse("13:00"), Priority.LOW);
     }
 
-    public static void addTask(Scanner sc, ScheduleManagerInstance manager){
+    public static void addTask(String description, LocalTime startTime, LocalTime endTime, Priority priority){
         try{
 
-            System.out.print("Enter Task description: ");
-            String description = sc.nextLine();
-    
-            System.out.print("Enter start time (hh:mm): ");
-            LocalTime startTime = LocalTime.parse(sc.nextLine());
-    
-            System.out.print("Enter end time (hh:mm): ");
-            LocalTime endTime = LocalTime.parse(sc.nextLine());
-    
-            System.out.print("Enter priority level (LOW/MEDIUM/HIGH): ");
-            Priority priority = Priority.valueOf(sc.nextLine().toUpperCase());
+            if(description == "" || startTime == null || endTime == null || priority == null){
+                System.out.println("Error: fields are missing");
+                logger.warning("Error: fields are missing");
+                return;
+            }
 
             Task task = TaskFactory.createTask(description, startTime, endTime, priority);
             manager.addTask(task);
@@ -75,7 +49,7 @@ public class Main {
         }
     }
 
-    public static void listTasks(ScheduleManagerInstance manager){
+    public static void viewTasks(){
         List<Task> tasks = manager.getTasks();
 
         if(tasks.isEmpty()){
@@ -90,16 +64,13 @@ public class Main {
         }
     }
 
-    public static void removeTask(Scanner sc, ScheduleManagerInstance manager){
+    public static void removeTask(String description){
         try{
-            System.out.print("Enter task name: ");
-            String taskName = sc.nextLine();
-
             List<Task> tasks= manager.getTasks();
             Task taskToRemove = null;
 
             for(int i=0; i<tasks.size(); i++){
-                if(tasks.get(i).getDescription().equalsIgnoreCase(taskName)){
+                if(tasks.get(i).getDescription().equalsIgnoreCase(description)){
                     taskToRemove = tasks.get(i);
                 }
             }
