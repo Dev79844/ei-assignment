@@ -21,6 +21,7 @@ public class Main {
             System.out.println("\n1. Add task");
             System.out.println("2. View tasks");
             System.out.println("3. Remove a task");
+            System.out.println("4. Exit");
             System.out.print("Enter your choice: ");
 
             try{
